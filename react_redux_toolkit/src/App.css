@@ -158,3 +158,24 @@ body {
 .add-to-cart-btn:hover {
   background-color: #2980b9; /* Darker Blue on hover */
 }
+
+.remove-button{
+  background-color: #e74c3c;
+  margin-top: 7px;
+}
+
+.remove-button:hover{
+  background-color: #96564f;
+}
+
+.clear-cart{
+  background-color:rgb(12, 233, 52);
+  font-size: medium;
+  font-weight: bold;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+}
+.clear-cart:hover{
+  background-color: rgb(54, 112, 65);
+}
