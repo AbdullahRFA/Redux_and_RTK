@@ -1,54 +1,78 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { addItem, removeItem } from '../redux/slice';
-
-const products = [
-  {
-    id: 1,
-    name: "Wireless Headphones",
-    price: 120,
-    image: "https://www.skyland.com.bd/image/cache/wp/gj/Hoco/Hoco%20W35%20Max%20Bluetooth%20Wireless%20Headphone%20(6)-500x500.webp",
-  },
-  {
-    id: 2,
-    name: "Smart Watch",
-    price: 80,
-    image: "https://cdn.bdstall.com/product-image/giant_247997.jpg",
-  },
-  {
-    id: 3,
-    name: "Gaming Mouse",
-    price: 45,
-    image: "https://www.ryans.com/storage/products/main/logitech-g502-x-plus-lightsync-black-gaming-11720091442.webp",
-  },
-  {
-    id: 4,
-    name: "Mechanical Keyboard",
-    price: 150,
-    image: "https://www.startech.com.bd/image/cache/catalog/keyboard/havit/kb884l/kb884l-01-500x500.webp",
-  },
-];
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProduct } from "../redux/productSlice";
+import { addItem, removeItem } from "../redux/slice"; // Import the cart action
 
 const ProductList = () => {
-    const dispatch = useDispatch()
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchProduct());
+  }, [dispatch]);
+
+  const { items, status } = useSelector((state) => state.product);
+
+  if (status === 'loading') return <div className="loading">Loading products...</div>;
+
   return (
     <div className="product-list-container">
       <h2 className="section-title">Our Products</h2>
       
+      {/* Grid Container */}
       <div className="product-grid">
-        {products.map((product) => (
-          <div key={product.id} className="product-card">
-            <div className="product-image">
-              <img src={product.image} alt={product.name} />
+        {items.length > 0 && items.map((item) => {
+           // Calculate original price for display: Price / (1 - discount/100)
+           const originalPrice = (item.price / (1 - item.discountPercentage / 100)).toFixed(2);
+
+           return (
+            <div className="product-card" key={item.id}>
+                {/* Image Section with Badge */}
+                <div className="product-image-wrapper">
+                    <img src={item.thumbnail} alt={item.title} className="product-img" />
+                    {item.discountPercentage > 0 && (
+                        <span className="discount-badge">-{Math.round(item.discountPercentage)}%</span>
+                    )}
+                </div>
+
+                {/* Content Section */}
+                <div className="product-content">
+                    <span className="product-brand">{item.brand}</span>
+                    <h3 className="product-title" title={item.title}>{item.title}</h3>
+                    <p className="product-desc">{item.description}</p>
+                    
+                    {/* Rating */}
+                    <div className="product-rating">
+                        <span className="star">★</span>
+                        <span>{item.rating}</span>
+                        <span className="review-count">({item.reviews?.length || 0} reviews)</span>
+                    </div>
+
+                    {/* Price Section */}
+                    <div className="product-price-box">
+                        <span className="current-price">${item.price}</span>
+                        <span className="old-price">${originalPrice}</span>
+                    </div>
+
+                    {/* Action Button */}
+                    <button 
+                        className="add-to-cart-btn"
+                        onClick={() => dispatch(addItem())}
+                        disabled={item.stock === 0}
+                    >
+                        {item.stock > 0 ? "Add to Cart" : "Out of Stock"}
+                    </button>
+
+                    <button 
+                        className="add-to-cart-btn remove-cart"
+                        onClick={() => dispatch(removeItem())}
+                        disabled={item.stock === 0}
+                    >
+                        Remove from cart
+                    </button>
+                </div>
             </div>
-            <div className="product-info">
-              <h3 className="product-name">{product.name}</h3>
-              <p className="product-price">${product.price}</p>
-              <button className="add-to-cart-btn" onClick={()=>dispatch(addItem(1))}>Add to Cart</button>
-              <button className="add-to-cart-btn remove-button" onClick={()=>dispatch(removeItem(1))}>Remove from Cart</button>
-            </div>
-          </div>
-        ))}
+           )
+        })}
       </div>
     </div>
   );
