@@ -1,4 +1,6 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { addItem } from '../redux/slice';
 
 const products = [
   {
@@ -28,6 +30,7 @@ const products = [
 ];
 
 const ProductList = () => {
+    const dispatch = useDispatch()
   return (
     <div className="product-list-container">
       <h2 className="section-title">Our Products</h2>
@@ -41,7 +44,7 @@ const ProductList = () => {
             <div className="product-info">
               <h3 className="product-name">{product.name}</h3>
               <p className="product-price">${product.price}</p>
-              <button className="add-to-cart-btn">Add to Cart</button>
+              <button className="add-to-cart-btn" onClick={()=>dispatch(addItem(1))}>Add to Cart</button>
             </div>
           </div>
         ))}
