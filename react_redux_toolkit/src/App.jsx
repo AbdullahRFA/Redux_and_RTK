@@ -23,7 +23,7 @@ function App() {
   return (
     <>
      <Header/>
-     <button className="clear-cart" onClick={()=>dispatch(clearAllItem())}>Clear Cart</button>
+     {/* <button className="clear-cart" onClick={()=>dispatch(clearAllItem())}>Clear Cart</button> */}
     <ProductList/>
     </>
   )

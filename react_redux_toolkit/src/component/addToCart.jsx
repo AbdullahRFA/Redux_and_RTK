@@ -2,8 +2,9 @@ import { useSelector } from "react-redux"
 
 const AddToCart=()=>{
 
-    const selector = useSelector((state)=>state.cart.value)
-
+    const Cartselector = useSelector((state)=>state.cart.item)
+    console.log("Cart Selector:",Cartselector)
+    console.log("Cart Selector length:",Cartselector.length)
 
     return(
 
@@ -15,7 +16,7 @@ const AddToCart=()=>{
                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
                 
-                <span class="cart-count">{selector}</span>
+                <span class="cart-count">{Cartselector.length?Cartselector.length:0 }</span>
             </a>
         </div>
     

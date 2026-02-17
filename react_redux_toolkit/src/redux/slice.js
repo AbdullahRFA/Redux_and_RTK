@@ -1,15 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
-    value:0
+    item : [],
 }
 
 const addToCart=createSlice({
     name:'Cart',
     initialState,
     reducers:{
-        addItem:(state)=>{
-            state.value+=1
+        addItem:(state,action)=>{
+            // state.value+=1
+            console.log(action)
+            state.item.push(action.payload)
         },
         removeItem:(state)=>{
             // if(state.value>0){

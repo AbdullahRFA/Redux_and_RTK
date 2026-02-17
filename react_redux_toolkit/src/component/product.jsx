@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProduct } from "../redux/productSlice";
-import { addItem, removeItem } from "../redux/slice"; // Import the cart action
+import { addItem } from "../redux/slice"; // Import the cart action
 
 const ProductList = () => {
   const dispatch = useDispatch();
@@ -56,19 +56,13 @@ const ProductList = () => {
                     {/* Action Button */}
                     <button 
                         className="add-to-cart-btn"
-                        onClick={() => dispatch(addItem())}
+                        onClick={() => dispatch(addItem(item))}
                         disabled={item.stock === 0}
                     >
                         {item.stock > 0 ? "Add to Cart" : "Out of Stock"}
                     </button>
 
-                    <button 
-                        className="add-to-cart-btn remove-cart"
-                        onClick={() => dispatch(removeItem())}
-                        disabled={item.stock === 0}
-                    >
-                        Remove from cart
-                    </button>
+                    
                 </div>
             </div>
            )
