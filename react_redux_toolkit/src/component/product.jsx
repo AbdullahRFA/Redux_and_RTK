@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProduct } from "../redux/productSlice";
-import { addItem } from "../redux/slice"; // Import the cart action
+import { addItem, removeItem } from "../redux/slice"; // Import the cart action
 
 const ProductList = () => {
   const dispatch = useDispatch();
@@ -75,8 +75,9 @@ const ProductList = () => {
                     <button
                       className="add-to-cart-btn btn-disable"
                       disabled={item.stock === 0}
+                      onClick={()=>dispatch(removeItem(item))}
                     >
-                      {item.stock > 0 ? "Added to Cart" : "Out of Stock"}
+                      Remove From Cart
                     </button>
                   ) : (
                     <button
