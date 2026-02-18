@@ -1,13 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
-import { clearAllItem, removeItem, updateQuantity } from "../redux/slice"; // Import updateQuantity
-import { Link, Route, Routes } from "react-router-dom";
+import { clearAllItem, removeItem, updateQuantity } from "../redux/slice"; 
+import { useNavigate } from "react-router-dom"; // 1. Import useNavigate
 
 function CartListItem() {
-  // 1. Read directly from Redux (Source of Truth)
   const cartItems = useSelector((state) => state.cart.item || []);
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // 2. Initialize hook
 
-  // 2. Handle Quantity via Redux
   const handleQuantityChange = (id, value) => {
     const qty = parseInt(value);
     if (!isNaN(qty) && qty > 0) {
@@ -15,18 +14,19 @@ function CartListItem() {
     }
   };
 
-  // 3. Calculate Subtotal safely
   const totalPrice = cartItems.reduce((total, item) => {
     const qty = item.quantity || 1;
     return total + (item.price * qty);
   }, 0);
 
-  //4. place order 
-  const placeOrder = ()=>{
-    alert("Your order is placed")
-    dispatch(clearAllItem())
-
-  }
+  // 3. Handle logic and navigation together
+  const placeOrder = () => {
+    if(window.confirm("Are you sure you want to place this order?")) {
+        alert("Your order is placed successfully!");
+        dispatch(clearAllItem());
+        navigate("/"); // Navigate programmatically
+    }
+  };
 
   return (
     <div className="cart-container">
@@ -36,26 +36,21 @@ function CartListItem() {
         <div className="empty-cart-message">Your cart is empty.</div>
       ) : (
         <div className="cart-list">
+          {/* ... existing map logic ... */}
           {cartItems.map((item) => {
-             // Default quantity to 1 if undefined
              const currentQty = item.quantity || 1; 
-             
              return (
               <div key={item.id} className="cart-item">
                 <div className="cart-item-img">
                   <img src={item.thumbnail} alt={item.title} />
                 </div>
-
                 <div className="cart-item-details">
                   <span className="item-brand">{item.brand}</span>
                   <h3 className="item-title">{item.title}</h3>
                   <p className="item-category">Category: {item.category}</p>
                 </div>
-
                 <div className="cart-item-actions">
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    
-                    {/* Quantity Input */}
                     <input
                       type="number"
                       min="1"
@@ -63,14 +58,10 @@ function CartListItem() {
                       onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                       value={currentQty}
                     />
-
                     <div>
-                      {/* Fix Math: Calculate first, then format */}
                       <div className="item-price">
                         ${(item.price * currentQty).toFixed(2)}
                       </div>
-                      
-                      {/* Dispatch Remove */}
                       <button
                         className="remove-btn"
                         onClick={() => dispatch(removeItem(item))}
@@ -86,17 +77,17 @@ function CartListItem() {
         </div>
       )}
 
-      {/* Footer */}
       {cartItems.length > 0 && (
         <div className="cart-summary">
           <div className="summary-row">
             <span>Subtotal:</span>
             <span className="summary-total">${totalPrice.toFixed(2)}</span>
           </div>
-          <Link to="/">
-
-          <button className="checkout-btn" onClick={()=>placeOrder()}>Proceed to Checkout</button>
-          </Link>
+          
+          {/* 4. Remove <Link> wrapper and use onClick */}
+          <button className="checkout-btn" onClick={placeOrder}>
+            Proceed to Checkout
+          </button>
         </div>
       )}
     </div>

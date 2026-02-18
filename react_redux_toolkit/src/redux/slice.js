@@ -1,8 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit"
 
+// Helper function to safely parse JSON
+const getLocalCartData = () => {
+    try {
+        const localData = localStorage.getItem("cart");
+        return localData ? JSON.parse(localData) : [];
+    } catch (error) {
+        console.error("Error parsing cart data:", error);
+        return [];
+    }
+};
+
 const initialState = {
-    item : localStorage.getItem("cart")?JSON.parse(localStorage.getItem("cart")):[],
-}
+    item: getLocalCartData(),
+};
 
 const addToCart = createSlice({
     name: 'Cart',
