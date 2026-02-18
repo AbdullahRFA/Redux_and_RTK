@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
-import { removeItem, updateQuantity } from "../redux/slice"; // Import updateQuantity
+import { clearAllItem, removeItem, updateQuantity } from "../redux/slice"; // Import updateQuantity
+import { Link, Route, Routes } from "react-router-dom";
 
 function CartListItem() {
   // 1. Read directly from Redux (Source of Truth)
@@ -19,6 +20,13 @@ function CartListItem() {
     const qty = item.quantity || 1;
     return total + (item.price * qty);
   }, 0);
+
+  //4. place order 
+  const placeOrder = ()=>{
+    alert("Your order is placed")
+    dispatch(clearAllItem())
+
+  }
 
   return (
     <div className="cart-container">
@@ -85,7 +93,10 @@ function CartListItem() {
             <span>Subtotal:</span>
             <span className="summary-total">${totalPrice.toFixed(2)}</span>
           </div>
-          <button className="checkout-btn">Proceed to Checkout</button>
+          <Link to="/">
+
+          <button className="checkout-btn" onClick={()=>placeOrder()}>Proceed to Checkout</button>
+          </Link>
         </div>
       )}
     </div>
