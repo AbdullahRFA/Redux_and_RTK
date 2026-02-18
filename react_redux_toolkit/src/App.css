@@ -536,4 +536,10 @@ body {
     padding-top: 10px;
     border-top: 1px solid #eee;
   }
+  /* --- Navigation Active State --- */
+.site-nav a.active-link {
+  color: #3498db; /* Blue color for active page */
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 4px;
+}
 }

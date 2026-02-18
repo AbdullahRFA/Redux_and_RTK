@@ -1,29 +1,35 @@
 import AddToCart from "./addToCart";
-
-
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom"; // Import NavLink for active styling
 
 const Header = () => {
   return (
-    <header class="site-header">
-      <div class="site-logo">
-        <a href="#">YourChoice</a>
+    <header className="site-header"> {/* Fixed: class -> className */}
+      <div className="site-logo">
+        <Link to="/">YourChoice</Link>
       </div>
 
-      <nav class="site-nav">
+      <nav className="site-nav">
         <ul>
           <li>
-            <Link to="/">Home</Link>
+            {/* NavLink adds an 'active' class automatically when route matches */}
+            <NavLink to="/" className={({ isActive }) => (isActive ? "active-link" : "")}>
+              Home
+            </NavLink>
           </li>
           <li>
-            <a href="#">Shop</a>
+            {/* Point Shop to home as well, or a specific /shop route if you make one */}
+            <NavLink to="/" className={({ isActive }) => (isActive ? "active-link" : "")}>
+              Shop
+            </NavLink>
           </li>
           <li>
-            <a href="#">About</a>
+            <NavLink to="/about" className={({ isActive }) => (isActive ? "active-link" : "")}>
+              About
+            </NavLink>
           </li>
         </ul>
       </nav>
-      <AddToCart></AddToCart>
+      <AddToCart />
     </header>
   );
 };
