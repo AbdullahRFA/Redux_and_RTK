@@ -1,11 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { clearAllItem, removeItem, updateQuantity } from "../redux/slice"; 
-import { useNavigate } from "react-router-dom"; // 1. Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 
 function CartListItem() {
   const cartItems = useSelector((state) => state.cart.item || []);
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // 2. Initialize hook
+  const navigate = useNavigate(); 
 
   const handleQuantityChange = (id, value) => {
     const qty = parseInt(value);
@@ -19,14 +19,20 @@ function CartListItem() {
     return total + (item.price * qty);
   }, 0);
 
-  // 3. Handle logic and navigation together
-  const placeOrder = () => {
+  // --- FIX STARTS HERE ---
+  const placeOrder = (e) => {
+    // 1. Prevent default browser behavior (form submission, etc)
+    e.preventDefault();
+    // 2. Stop event from bubbling up to any parents
+    e.stopPropagation();
+
     if(window.confirm("Are you sure you want to place this order?")) {
         alert("Your order is placed successfully!");
         dispatch(clearAllItem());
-        navigate("/"); // Navigate programmatically
+        navigate("/"); 
     }
   };
+  // --- FIX ENDS HERE ---
 
   return (
     <div className="cart-container">
@@ -36,18 +42,17 @@ function CartListItem() {
         <div className="empty-cart-message">Your cart is empty.</div>
       ) : (
         <div className="cart-list">
-          {/* ... existing map logic ... */}
           {cartItems.map((item) => {
              const currentQty = item.quantity || 1; 
              return (
               <div key={item.id} className="cart-item">
                 <div className="cart-item-img">
-                  <img src={item.thumbnail} alt={item.title} />
+                    <img src={item.thumbnail} alt={item.title} />
                 </div>
                 <div className="cart-item-details">
-                  <span className="item-brand">{item.brand}</span>
-                  <h3 className="item-title">{item.title}</h3>
-                  <p className="item-category">Category: {item.category}</p>
+                    <span className="item-brand">{item.brand}</span>
+                    <h3 className="item-title">{item.title}</h3>
+                    <p className="item-category">Category: {item.category}</p>
                 </div>
                 <div className="cart-item-actions">
                   <div style={{ display: "flex", alignItems: "center" }}>
@@ -84,7 +89,7 @@ function CartListItem() {
             <span className="summary-total">${totalPrice.toFixed(2)}</span>
           </div>
           
-          {/* 4. Remove <Link> wrapper and use onClick */}
+          {/* Pass the event 'e' automatically by passing the function reference */}
           <button className="checkout-btn" onClick={placeOrder}>
             Proceed to Checkout
           </button>
