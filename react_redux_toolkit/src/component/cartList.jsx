@@ -1,14 +1,24 @@
-import { useSelector, useDispatch } from "react-redux";
-// Assuming you will update your slice to handle removing by ID
-import { removeItem } from "../redux/slice"; 
+import { useDispatch, useSelector } from "react-redux";
+import { removeItem, updateQuantity } from "../redux/slice"; // Import updateQuantity
 
 function CartListItem() {
-  // Access the array of items from your Redux state
+  // 1. Read directly from Redux (Source of Truth)
   const cartItems = useSelector((state) => state.cart.item || []);
   const dispatch = useDispatch();
 
-  // Calculate Subtotal
-  const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
+  // 2. Handle Quantity via Redux
+  const handleQuantityChange = (id, value) => {
+    const qty = parseInt(value);
+    if (!isNaN(qty) && qty > 0) {
+      dispatch(updateQuantity({ id, quantity: qty }));
+    }
+  };
+
+  // 3. Calculate Subtotal safely
+  const totalPrice = cartItems.reduce((total, item) => {
+    const qty = item.quantity || 1;
+    return total + (item.price * qty);
+  }, 0);
 
   return (
     <div className="cart-container">
@@ -18,47 +28,64 @@ function CartListItem() {
         <div className="empty-cart-message">Your cart is empty.</div>
       ) : (
         <div className="cart-list">
-          {cartItems.map((item, index) => (
-            <div key={`${item.id}-${index}`} className="cart-item">
-              
-              {/* Product Image */}
-              <div className="cart-item-img">
-                <img src={item.thumbnail} alt={item.title} />
-              </div>
+          {cartItems.map((item) => {
+             // Default quantity to 1 if undefined
+             const currentQty = item.quantity || 1; 
+             
+             return (
+              <div key={item.id} className="cart-item">
+                <div className="cart-item-img">
+                  <img src={item.thumbnail} alt={item.title} />
+                </div>
 
-              {/* Product Details */}
-              <div className="cart-item-details">
-                <span className="item-brand">{item.brand}</span>
-                <h3 className="item-title">{item.title}</h3>
-                <p className="item-category">Category: {item.category}</p>
-                <div className="stock-status" style={{ color: item.stock > 0 ? 'green' : 'red' }}>
-                   {item.availabilityStatus}
+                <div className="cart-item-details">
+                  <span className="item-brand">{item.brand}</span>
+                  <h3 className="item-title">{item.title}</h3>
+                  <p className="item-category">Category: {item.category}</p>
+                </div>
+
+                <div className="cart-item-actions">
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    
+                    {/* Quantity Input */}
+                    <input
+                      type="number"
+                      min="1"
+                      style={{ margin: "15px", width: "60px" }}
+                      onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                      value={currentQty}
+                    />
+
+                    <div>
+                      {/* Fix Math: Calculate first, then format */}
+                      <div className="item-price">
+                        ${(item.price * currentQty).toFixed(2)}
+                      </div>
+                      
+                      {/* Dispatch Remove */}
+                      <button
+                        className="remove-btn"
+                        onClick={() => dispatch(removeItem(item))}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {/* Price & Actions */}
-              <div className="cart-item-actions">
-                <div className="item-price">${item.price.toFixed(2)}</div>
-                <button 
-                    className="remove-btn" 
-                    onClick={() => dispatch(removeItem(item))}
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      {/* Cart Summary / Footer */}
+      {/* Footer */}
       {cartItems.length > 0 && (
         <div className="cart-summary">
-            <div className="summary-row">
-                <span>Subtotal:</span>
-                <span className="summary-total">${totalPrice.toFixed(2)}</span>
-            </div>
-            <button className="checkout-btn">Proceed to Checkout</button>
+          <div className="summary-row">
+            <span>Subtotal:</span>
+            <span className="summary-total">${totalPrice.toFixed(2)}</span>
+          </div>
+          <button className="checkout-btn">Proceed to Checkout</button>
         </div>
       )}
     </div>
